@@ -34,7 +34,7 @@ describe('Validators APIs', () => {
         it('should return empty result', done => {
             const data = {
                 "result": {
-                    "block_height": "3363042",
+                    "block_height": sampleData.result.block_height,
                     "validators": [sampleData.result.validators[0]]
                 }
             };
@@ -90,7 +90,7 @@ describe('Validators APIs', () => {
             const data = {
                 "result": {
                     "block_height": "xxx",
-                    "validators": 123
+                    "validators": null
                 }
             };
             chai.request(app)
@@ -104,7 +104,7 @@ describe('Validators APIs', () => {
                     res.body.should.have.property('updated').that.is.a('number').that.equals(0);
                     res.body.should.have.property('errors').that.is.a('array').with.lengthOf(2)
                         .that.include('blockHeight is required')
-                        .that.include('blockHeight is required');
+                        .that.include('validators must be array');
                     done();
                 });
         });
@@ -169,7 +169,7 @@ describe('Validators APIs', () => {
                 });
         });
 
-        it('should return invalid numer errors', done => {
+        it('should return invalid number errors', done => {
             const data = {
                 "result": {
                     "block_height": "3363042",
@@ -265,7 +265,7 @@ describe('Validators APIs', () => {
                     res.body.should.have.property('_id');
                     res.body.should.have.property('address');
                     res.body.should.have.property('pub_key');
-                    res.body.should.have.property('voting_power');
+                    res.body.should.have.property('voting_power').that.is.equals(123);
                     res.body.should.have.property('proposer_priority');
                     res.body.should.have.property('updated_at_block');
                     done();
@@ -274,7 +274,7 @@ describe('Validators APIs', () => {
 
         it('should return 404 error', done => {
             chai.request(app)
-                .get('/validators/' + sampleData.result.validators[0].address + '123')
+                .get('/validators/' + sampleData.result.validators[0].address + 'xxx')
                 .end((err, res) => {
                     should.not.exist(err);
                     res.should.have.status(404);
